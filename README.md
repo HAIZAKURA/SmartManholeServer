@@ -7,7 +7,7 @@
 
 - ~~User Serve API~~
 - ~~Dept Serve API~~
-- Device Serve API
+- ~~Device Serve API~~
 - ~~Log Serve API~~
 - TCP Communication Processing Module
 
@@ -15,6 +15,7 @@
 
 - User Serve Api
 - Dept Serve API
+- Device Serve API
 - Log Serve API
 
 ## Author
