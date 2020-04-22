@@ -12,6 +12,7 @@ router.post('/dev', (req, res) => {
   // user login & permission judgment
   if (req.session.userinfo.uauth == 'admin') {
     if (req.body.vdept == 'all') {
+      // get all device list while admin request
       Device.find({}, { _id: 0 })
         .then(devlist => {
           res.json({
@@ -26,6 +27,7 @@ router.post('/dev', (req, res) => {
           })
         })
     } else {
+      // get a dept device list while admin request
       Device.find({ vdept: req.body.vdept }, { _id: 0 })
         .then(devlist => {
           res.json({
@@ -41,6 +43,7 @@ router.post('/dev', (req, res) => {
         })
     }
   } else if (req.session.userinfo.uauth == 'company') {
+    // get owned device list while company request
     Device.find({ vdept: req.session.userinfo.udept }, { _id: 0 })
       .then(devlist => {
         res.json({
@@ -92,7 +95,7 @@ router.post('/dev/add', (req, res) => {
 // delete device interface
 router.post('/dev/del', (req, res) => {
   if (req.session.userinfo.uauth == 'admin') {
-    // delete device
+    // delete device while admin request
     Device.findOneAndDelete({ vidno: req.body.vidno })
       .then(dev => {
         res.json({
@@ -106,8 +109,8 @@ router.post('/dev/del', (req, res) => {
           msg: req.body.vidno
         })
       })
-  } else if (req.session.userinfo.uauth == 'company') {
-    // delete device
+  } else if (req.session.userinfo.uauth == 'company' || req.session.userinfo.uauth == 'user') {
+    // delete device while company or user request
     Device.findOneAndDelete({ vidno: req.body.vidno, vdept: req.session.userinfo.udept })
       .then(dev => {
         res.json({
@@ -132,7 +135,7 @@ router.post('/dev/del', (req, res) => {
 // modify device interface
 router.post('/dev/mod', (req, res) => {
   if (req.session.userinfo) {
-    // modify device
+    // modify device name
     Device.findOneAndUpdate({ vidno: req.body.vidno, vdept: req.session.userinfo.udept }, { $set: { vname: req.body.vname } })
       .then(dev => {
         res.json({
@@ -157,7 +160,20 @@ router.post('/dev/mod', (req, res) => {
 // update device status interface
 router.post('/dev/up', (req, res) => {
   if (req.session.userinfo) {
-
+    // update device status
+    Device.findOneAndUpdate({ vidno: req.body.vidno, vdept: req.session.userinfo.udept }, { $set: { vstat: req.body.vstat } })
+      .then(dev => {
+        res.json({
+          status: 'success',
+          msg: req.body.vidno
+        })
+      })
+      .catch(err => {
+        res.json({
+          status: 'fail',
+          msg: req.body.vidno
+        })
+      })
   } else {
     res.json({
       status: 'error',
