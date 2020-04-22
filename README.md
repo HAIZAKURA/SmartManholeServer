@@ -5,7 +5,7 @@
 
 ## To Do List
 
-- User Serve API
+- ~~User Serve API~~
 - ~~Dept Serve API~~
 - Device Serve API
 - ~~Log Serve API~~
@@ -13,6 +13,7 @@
 
 ## Completed List
 
+- User Serve Api
 - Dept Serve API
 - Log Serve API
 
