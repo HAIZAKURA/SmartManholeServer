@@ -102,3 +102,7 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Temp Docs files
+docs/~$restfulapi.xlsx
+docs/~$database.xlsx
