@@ -49,35 +49,44 @@ router.post('/user/logout', (req, res) => {
 // user add interface
 router.post('/user/add', (req, res) => {
   // user login & permission judgment
-  if (req.session.userinfo.uauth == 'admin' || req.session.userinfo.uauth == 'company') {
-    // add user auth judgment
-    if (req.session.userinfo.uauth == 'company' && req.body.uauth == 'admin') {
+  if (req.session.userinfo.uauth == 'admin') {
+    // add data while admin request
+    addData = { 'uname': req.body.uname, 'upass': md5(req.body.upass), 'uauth': req.body.uauth, 'udept': req.body.uauth }
+    // create user
+    User.create(addData, (err, data) => {
+      if (err) {
+        res.json({
+          status: 'fail',
+          msg: req.body.uname
+        })
+      } else {
+        res.json({
+          status: 'success',
+          msg: req.body.uname
+        })
+      }
+    })
+  } else if (req.session.userinfo.uauth == 'company') {
+    // uauth effective judgement
+    if (req.body.uauth == 'admin') {
       res.json({
         status: 'error',
         msg: 'unauthorized'
       })
     } else {
-      // add data
-      addData = { 'uname': req.body.uname, 'upass': md5(req.body.upass), 'uauth': req.body.uauth }
-      // users only can create users in their own dept except admin
-      if (req.session.userinfo.uauth == 'admin') {
-        addData.udept = req.body.udept
-      } else {
-        addData.udept = req.session.userinfo.udept
-      }
+      // add data while company request
+      addData = { 'uname': req.body.uname, 'upass': md5(req.body.upass), 'uauth': req.body.uauth, 'udept': req.session.userinfo.udept }
       // create user
       User.create(addData, (err, data) => {
         if (err) {
-          // add failed return
           res.json({
             status: 'fail',
             msg: req.body.uname
           })
         } else {
-          // add succeed return
           res.json({
             status: 'success',
-            msg: req.body.uname 
+            msg: req.body.uname
           })
         }
       })
@@ -92,40 +101,31 @@ router.post('/user/add', (req, res) => {
 
 // user delete interface
 router.post('/user/del', (req, res) => {
-  // user login judgment
-  if (req.session.userinfo) {
-    // user permission judgment
-    if (req.session.userinfo.uauth == 'admin' || req.session.userinfo.uauth == 'company') {
-      // del data
-      delData = { 'uname': req.body.uname }
-      // users only can delete users in their own dept except admin
-      if (req.session.userinfo.uauth == 'admin') {
-        delData.udept = req.body.udept
-      } else {
-        delData.udept = req.session.userinfo.udept
-      }
-      // delete user
-      User.findOneAndDelete(delData)
-        .then(user => {
-          // delete succeed return
-          res.json({
-            status: 'success',
-            msg: req.body.uname
-          })
-        })
-        .catch(err => {
-          // delete failed return
-          res.json({
-            status: 'fail',
-            msg: req.body.uname
-          })
-        })
+  // user login & permission judgment
+  if (req.session.userinfo.uauth == 'admin' || req.session.userinfo.uauth == 'company') {
+    if (req.session.userinfo.uauth == 'admin') {
+      // delete data while admin request
+      delData = { 'uname': req.body.uname, 'udept': req.body.udept }
     } else {
-      res.json({
-        status: 'error',
-        msg: 'unauthorized'
-      })
+      // delete data while company request
+      delData = { 'uname': req.body.uname, 'udept': req.session.userinfo.udept }
     }
+    // delete user
+    User.findOneAndDelete(delData)
+      .then(user => {
+        // delete succeed return
+        res.json({
+          status: 'success',
+          msg: req.body.uname
+        })
+      })
+      .catch(err => {
+        // delete failed return
+        res.json({
+          status: 'fail',
+          msg: req.body.uname
+        })
+      })
   } else {
     res.json({
       status: 'error',
@@ -186,6 +186,12 @@ router.post('/user', (req, res) => {
           res.json({
             status: 'success',
             user: userlist
+          })
+        })
+        .catch(err => {
+          res.json({
+            status: 'fail',
+            msg: req.body.udept
           })
         })
     }
