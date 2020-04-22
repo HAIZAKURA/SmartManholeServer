@@ -23,7 +23,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(session({
   name: 'smd_session',
   secret: 'smd_5ykMMO2LJSZwEkX9',
-  cookie: { maxAge: 30*60*1000 },
+  cookie: { maxAge: 60*60*1000 },
   resave: false,
   saveUninitialized: true
 }))
