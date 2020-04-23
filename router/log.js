@@ -4,6 +4,7 @@
 const express = require('express')
 const router = express.Router()
 
+// get now date function
 function getNowDate() {
   let date = new Date()
   let year = date.getFullYear()
@@ -12,6 +13,7 @@ function getNowDate() {
   let hour = date.getHours()
   let minute = date.getMinutes()
   let second = date.getSeconds()
+  // format date : yyyy-MM-dd-HH-mm-ss
   let formatDate = year + '-' + month + '-' + day + '-' + hour + '-' + minute + '-' + second
   return formatDate
 }
@@ -51,7 +53,7 @@ router.post('/log/add', (req, res) => {
   // user login judgment
   if (req.session.userinfo) {
     // add data
-    addData = {
+    let addData = {
       'ldev': req.body.ldev,
       'ldep': req.session.userinfo.udept,
       'lopt': req.body.lopt,

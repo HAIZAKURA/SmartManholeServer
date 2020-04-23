@@ -69,7 +69,7 @@ router.post('/dev', (req, res) => {
 router.post('/dev/add', (req, res) => {
   if (req.session.userinfo) {
     // add data
-    addData = { 'vidno': req.body.vidno, 'vname': req.body.vname, 'vposi': req.body.vposi, 'vdept': req.session.userinfo.udept }
+    let addData = { 'vidno': req.body.vidno, 'vname': req.body.vname, 'vposi': req.body.vposi, 'vdept': req.session.userinfo.udept }
     // create device
     Device.create(addData, (err, data) => {
       if (err) {
@@ -96,7 +96,7 @@ router.post('/dev/add', (req, res) => {
 router.post('/dev/del', (req, res) => {
   if (req.session.userinfo.uauth == 'admin') {
     // delete device while admin request
-    Device.findOneAndDelete({ vidno: req.body.vidno })
+    Device.findOneAndDelete(req.body)
       .then(dev => {
         res.json({
           status: 'success',

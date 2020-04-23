@@ -51,7 +51,7 @@ router.post('/user/add', (req, res) => {
   // user login & permission judgment
   if (req.session.userinfo.uauth == 'admin') {
     // add data while admin request
-    addData = { 'uname': req.body.uname, 'upass': md5(req.body.upass), 'uauth': req.body.uauth, 'udept': req.body.uauth }
+    let addData = { 'uname': req.body.uname, 'upass': md5(req.body.upass), 'uauth': req.body.uauth, 'udept': req.body.uauth }
     // create user
     User.create(addData, (err, data) => {
       if (err) {
@@ -75,7 +75,7 @@ router.post('/user/add', (req, res) => {
       })
     } else {
       // add data while company request
-      addData = { 'uname': req.body.uname, 'upass': md5(req.body.upass), 'uauth': req.body.uauth, 'udept': req.session.userinfo.udept }
+      let addData = { 'uname': req.body.uname, 'upass': md5(req.body.upass), 'uauth': req.body.uauth, 'udept': req.session.userinfo.udept }
       // create user
       User.create(addData, (err, data) => {
         if (err) {
@@ -105,10 +105,10 @@ router.post('/user/del', (req, res) => {
   if (req.session.userinfo.uauth == 'admin' || req.session.userinfo.uauth == 'company') {
     if (req.session.userinfo.uauth == 'admin') {
       // delete data while admin request
-      delData = { 'uname': req.body.uname, 'udept': req.body.udept }
+      var delData = { 'uname': req.body.uname, 'udept': req.body.udept }
     } else {
       // delete data while company request
-      delData = { 'uname': req.body.uname, 'udept': req.session.userinfo.udept }
+      var delData = { 'uname': req.body.uname, 'udept': req.session.userinfo.udept }
     }
     // delete user
     User.findOneAndDelete(delData)
