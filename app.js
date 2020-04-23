@@ -42,6 +42,10 @@ const server = net.createServer(socket => {
   socket.on('data', data => {
     console.log(data.toString())
     socket.write('hello+' + data.toString())
+    let msg = data.toString().split('/')
+    let dev = msg[0]
+    let opt = msg[1]
+    let usr = (opt == 'al') ? 'none' : msg[2]
   })
 })
 
