@@ -8,6 +8,7 @@ const bodyParser = require('body-parser')
 const express = require('express')
 const session = require('express-session')
 const mongoose = require('mongoose')
+const fs = require('fs')
 
 // import router
 const user = require('./router/user')
@@ -129,7 +130,32 @@ const server = net.createServer(socket => {
   })
 })
 
-
+// init while first use
+fs.exists('init.lock', exists => {
+  if (!exists) {
+    let User = require('./schema/user')
+    let Dept = require('./schema/dept')
+    User.create({ 'uname': 'admin', upass: 'e10adc3949ba59abbe56e057f20f883e', uauth: 'admin', udept: 'admin' }, (err, data) => {
+      if (!err) {
+        console.log('admin account created')
+        Dept.create({ dname: 'admin', ddesc: '管理组' }, (err, data) => {
+          if (!err) {
+            console.log('admin dept created')
+            console.log('Server Init Complete')
+            fs.writeFile('init.lock', 'init.lock', error => {
+              if (error) {
+                console.log('Permission Denied')
+                console.log('Please create file < init.lock > by yourself')
+              }
+            })
+          }
+        })
+      } else {
+        console.log('error : please check detabase')
+      }
+    })
+  }
+})
 
 // run api server
 app.listen(API_PORT, () => {
