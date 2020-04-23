@@ -10,7 +10,7 @@
 - ~~Device Serve API~~
 - ~~Log Serve API~~
 - ~~TCP Communication Processing Module~~
-- Database Init Module while First Use
+- ~~Database Init Module while First Use~~
 
 ## Completed List
 
@@ -19,6 +19,7 @@
 - Device Serve API
 - Log Serve API
 - TCP Communication Processing Module
+- Database Init Module while First Use
 
 ## Author
 
