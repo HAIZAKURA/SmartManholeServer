@@ -1,5 +1,5 @@
 # SmartManholeDash
- [![Author](https://img.shields.io/badge/Author-HAIZAKURA-b68469?style=flat-square)](https://nya.run) [![License](https://img.shields.io/github/license/HAIZAKURA/SmartManholeDash?style=flat-square)](./LICENSE)
+ [![Author](https://img.shields.io/badge/Author-HAIZAKURA-b68469?style=flat-square)](https://nya.run) [![License](https://img.shields.io/github/license/HAIZAKURA/SmartManholeServer?style=flat-square)](./LICENSE)
 
  Smart Manhole Dashboard Restful API Server with MongoDB.
 

@@ -14,15 +14,15 @@ const API_PORT = 3000
 
 // init mongodb conn
 mongoose.set('useCreateIndex', true)
-const mongodb = mongoose.connect('mongodb://localhost:27017/smd', { useNewUrlParser: true, useUnifiedTopology: true })
+const mongodb = mongoose.connect('mongodb://localhost:27017/sms', { useNewUrlParser: true, useUnifiedTopology: true })
 
 // init api server
 const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(session({
-  name: 'smd_session',
-  secret: 'smd_5ykMMO2LJSZwEkX9',
+  name: 'sms_session',
+  secret: 'sms_5ykMMO2LJSZwEkX9',
   cookie: { maxAge: 60*60*1000 },
   resave: false,
   saveUninitialized: true
