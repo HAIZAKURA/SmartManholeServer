@@ -9,6 +9,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "md5-node": "^1.0.1",
-    "mongoose": "^5.9.9"
+    "mongoose": "^5.9.9",
+    "pkg": "^4.4.7"
   }
 }
