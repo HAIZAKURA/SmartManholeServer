@@ -10,6 +10,23 @@ const md5 = require('md5-node')
 // import user schema
 const User = require('../schema/user')
 
+// user login check interface
+router.get('/check', (req, res) => {
+  if (req.session.userinfo) {
+    res.json({
+      status: 'success',
+      uname: user.uname,
+      uauth: user.uauth,
+      udept: user.udept
+    })
+  } else {
+    res.json({
+      status: 'error',
+      msg: 'unauthorized'
+    })
+  }
+})
+
 // user login interface
 router.post('/user/login', (req, res) => {
   User.findOne({ 'uname': req.body.uname, 'upass': md5(req.body.upass) })
