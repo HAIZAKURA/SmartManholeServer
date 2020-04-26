@@ -15,9 +15,9 @@ router.get('/check', (req, res) => {
   if (req.session.userinfo) {
     res.json({
       status: 'success',
-      uname: user.uname,
-      uauth: user.uauth,
-      udept: user.udept
+      uname: req.session.userinfo.uname,
+      uauth: req.session.userinfo.uauth,
+      udept: req.session.userinfo.udept
     })
   } else {
     res.json({
