@@ -65,34 +65,12 @@ router.post('/user/logout', (req, res) => {
 
 // user add interface
 router.post('/user/add', (req, res) => {
-  // user login & permission judgment
-  if (req.session.userinfo.uauth == 'admin') {
-    // add data while admin request
-    let addData = { 'uname': req.body.uname, 'upass': md5(req.body.upass), 'uauth': req.body.uauth, 'udept': req.body.uauth }
-    // create user
-    User.create(addData, (err, data) => {
-      if (err) {
-        res.json({
-          status: 'fail',
-          msg: req.body.uname
-        })
-      } else {
-        res.json({
-          status: 'success',
-          msg: req.body.uname
-        })
-      }
-    })
-  } else if (req.session.userinfo.uauth == 'company') {
-    // uauth effective judgement
-    if (req.body.uauth == 'admin') {
-      res.json({
-        status: 'error',
-        msg: 'unauthorized'
-      })
-    } else {
-      // add data while company request
-      let addData = { 'uname': req.body.uname, 'upass': md5(req.body.upass), 'uauth': req.body.uauth, 'udept': req.session.userinfo.udept }
+  // user login judgment
+  if (req.session.userinfo) {
+    // user permission judgment
+    if (req.session.userinfo.uauth == 'admin') {
+      // add data while admin request
+      let addData = { 'uname': req.body.uname, 'upass': md5(req.body.upass), 'uauth': req.body.uauth, 'udept': req.body.uauth }
       // create user
       User.create(addData, (err, data) => {
         if (err) {
@@ -107,6 +85,36 @@ router.post('/user/add', (req, res) => {
           })
         }
       })
+    } else if (req.session.userinfo.uauth == 'company') {
+      // uauth effective judgement
+      if (req.body.uauth == 'admin') {
+        res.json({
+          status: 'error',
+          msg: 'unauthorized'
+        })
+      } else {
+        // add data while company request
+        let addData = { 'uname': req.body.uname, 'upass': md5(req.body.upass), 'uauth': req.body.uauth, 'udept': req.session.userinfo.udept }
+        // create user
+        User.create(addData, (err, data) => {
+          if (err) {
+            res.json({
+              status: 'fail',
+              msg: req.body.uname
+            })
+          } else {
+            res.json({
+              status: 'success',
+              msg: req.body.uname
+            })
+          }
+        })
+      }
+    } else {
+      res.json({
+        status: 'error',
+        msg: 'unauthorized'
+      })
     }
   } else {
     res.json({
@@ -118,31 +126,39 @@ router.post('/user/add', (req, res) => {
 
 // user delete interface
 router.post('/user/del', (req, res) => {
-  // user login & permission judgment
-  if (req.session.userinfo.uauth == 'admin' || req.session.userinfo.uauth == 'company') {
-    if (req.session.userinfo.uauth == 'admin') {
-      // delete data while admin request
-      var delData = { 'uname': req.body.uname, 'udept': req.body.udept }
+  // user login judgment
+  if (req.session.userinfo) {
+    // user permission judgment
+    if (req.session.userinfo.uauth == 'admin' || req.session.userinfo.uauth == 'company') {
+      if (req.session.userinfo.uauth == 'admin') {
+        // delete data while admin request
+        var delData = { 'uname': req.body.uname, 'udept': req.body.udept }
+      } else {
+        // delete data while company request
+        var delData = { 'uname': req.body.uname, 'udept': req.session.userinfo.udept }
+      }
+      // delete user
+      User.findOneAndDelete(delData)
+        .then(user => {
+          // delete succeed return
+          res.json({
+            status: 'success',
+            msg: req.body.uname
+          })
+        })
+        .catch(err => {
+          // delete failed return
+          res.json({
+            status: 'fail',
+            msg: req.body.uname
+          })
+        })
     } else {
-      // delete data while company request
-      var delData = { 'uname': req.body.uname, 'udept': req.session.userinfo.udept }
+      res.json({
+        status: 'error',
+        msg: 'unauthorized'
+      })
     }
-    // delete user
-    User.findOneAndDelete(delData)
-      .then(user => {
-        // delete succeed return
-        res.json({
-          status: 'success',
-          msg: req.body.uname
-        })
-      })
-      .catch(err => {
-        // delete failed return
-        res.json({
-          status: 'fail',
-          msg: req.body.uname
-        })
-      })
   } else {
     res.json({
       status: 'error',
@@ -179,11 +195,44 @@ router.post('/user/mod', (req, res) => {
 
 // user list get interface
 router.post('/user', (req, res) => {
-  // user login & permission judgment
-  if (req.session.userinfo.uauth == 'admin') {
-    if (req.body.udept == 'all') {
-      // get all users only by admin
-      User.find({}, { _id: 0 })
+  // user login judgment
+  if (req.session.userinfo) {
+    // user permission judgment
+    if (req.session.userinfo.uauth == 'admin') {
+      if (req.body.udept == 'all') {
+        // get all users only by admin
+        User.find({}, { _id: 0 })
+          .then(userlist => {
+            res.json({
+              status: 'success',
+              user: userlist
+            })
+          })
+          .catch(err => {
+            res.json({
+              status: 'fail',
+              msg: req.body.udept
+            })
+          })
+      } else {
+        // get one dept users
+        User.find({ udept: req.body.udept }, { _id: 0 })
+          .then(userlist => {
+            res.json({
+              status: 'success',
+              user: userlist
+            })
+          })
+          .catch(err => {
+            res.json({
+              status: 'fail',
+              msg: req.body.udept
+            })
+          })
+      }
+    } else if (req.session.userinfo.uauth == 'company') {
+      // get owned dept users
+      User.find({ udept: req.session.userinfo.udept }, { _id: 0 })
         .then(userlist => {
           res.json({
             status: 'success',
@@ -193,40 +242,15 @@ router.post('/user', (req, res) => {
         .catch(err => {
           res.json({
             status: 'fail',
-            msg: req.body.udept
+            msg: req.session.userinfo.udept
           })
         })
     } else {
-      // get one dept users
-      User.find({ udept: req.body.udept }, { _id: 0 })
-        .then(userlist => {
-          res.json({
-            status: 'success',
-            user: userlist
-          })
-        })
-        .catch(err => {
-          res.json({
-            status: 'fail',
-            msg: req.body.udept
-          })
-        })
+      res.json({
+        status: 'error',
+        msg: 'unauthorized'
+      })
     }
-  } else if (req.session.userinfo.uauth == 'company') {
-    // get owned dept users
-    User.find({ udept: req.session.userinfo.udept }, { _id: 0 })
-      .then(userlist => {
-        res.json({
-          status: 'success',
-          user: userlist
-        })
-      })
-      .catch(err => {
-        res.json({
-          status: 'fail',
-          msg: req.session.userinfo.udept
-        })
-      })
   } else {
     res.json({
       status: 'error',
